@@ -51,7 +51,12 @@ typedef struct {
 } KTP;
 
 
-void load_data();
+void load_data(KTP data[], short *record_count);
+void save_database(const KTP records[], const short *record_count);
+void display(const KTP records[], const short record_count);
+void display_specific_record(const KTP records[], const short record_line);
+void create(short *record_count);
+void delete(KTP records[], short *record_count);
 
 int main() {
     KTP citizen_data[MAX_DATA];
@@ -113,6 +118,26 @@ void load_data(KTP data[], short *record_count) {
     }
 
     fclose(db);
+}
+
+void save_database(const KTP records[], const short *record_count) {
+
+}
+
+void display(const KTP records[], const short record_count) {
+
+}
+
+void display_specific_record(const KTP records[], const short record_line) {
+
+}
+
+void create(short *record_count) {
+
+}
+
+void delete(KTP records[], short *record_count) {
+    
 }
 
 /*
