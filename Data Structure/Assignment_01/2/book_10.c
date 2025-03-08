@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #define CAPACITY 8 // the number of athletes
 #define MAXNAME 64 // max length of athlete's names
@@ -37,7 +38,7 @@ unsigned short read(Data ath[]) {
         strncpy(ath[turn % CAPACITY].name, token, MAXNAME);
         
         token = strtok(NULL, ";");
-        ath[turn % CAPACITY].dist += strtof(token, NULL); // sum of distance jumped
+        ath[turn % CAPACITY].dist = fmax(strtof(token, NULL), ath[turn % CAPACITY].dist) ;
         
         turn++;
     }
@@ -84,7 +85,7 @@ int main () {
             order += same_cnt;
             same_cnt = 0;
         }
-        printf("%s %.3f\n", athlete[i].name, athlete[i].dist / round);
+        printf("%s %.3f\n", athlete[i].name, athlete[i].dist);
     }
     
     return 0;
