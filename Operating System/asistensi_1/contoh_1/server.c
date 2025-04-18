@@ -26,7 +26,7 @@ int main() {
     while (1) {
         msgrcv(msgid, &msg_rcv, sizeof(msg_rcv.mtext), 0, 0);
         
-        strcpy(tmp, msg_rcv);
+        strcpy(tmp, msg_rcv.mtext);
         content = strtok(tmp, "_");
         count_str = strtok(NULL, "_");
         
@@ -40,7 +40,7 @@ int main() {
 
         sprintf(msg_snd.mtext, "Balasan untuk Client%ld: Pesan diterima\n", msg_rcv.mtype);
         msg_snd.mtype = msg_rcv.mtype + 10;
-        msgsnd(msgid, &msg_snd, strlen(msg_snd.mtext), 0, 0);
+        msgsnd(msgid, &msg_snd, strlen(msg_snd.mtext), 0);
     }
     
 }
