@@ -18,7 +18,7 @@ void stackArray_push(StackArray *stack, int value);
 void stackArray_pop(StackArray *stack);
 int  stackArray_top(StackArray *stack);
 
-void stackArray_init(StackArray *stack, unsigned int stackSize) {
+void stackArray_init(StackArray *stack, unsigned stackSize) {
     stack->_element  = (int*) malloc(sizeof(int) * stackSize);
     stack->_size     = 0;
     stack->_topIndex = -1;
