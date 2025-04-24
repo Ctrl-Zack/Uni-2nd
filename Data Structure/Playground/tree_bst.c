@@ -1,20 +1,14 @@
-#include<stdio.h>
-#include<stdlib.h>
+int global_positives = 0;
 
-typedef struct bstnode_t {
-    int key;
-    struct bstnode_t \
-    *left,
-    *right;
-} BSTNode;
+typedef struct list {
+    struct list *next;
+    double val;
+} * list;
 
-typedef struct bst_t {
-    BSTNode *_root;
-    unsigned int _size;
-} BST;
-
-
-
-int main() {
-    return 0;
+void count_positives(list l) {
+    list p;
+    for (p = l; p; p = p->next) {
+        if(p->val > 0.0)
+            ++global_positives;
+    }   
 }
