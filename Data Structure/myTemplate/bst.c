@@ -100,15 +100,15 @@ void print_pre_order(Node *root) {
 
 void print_in_order(Node *root) {
     if(root == NULL) return;
-    print_pre_order(root->_left);
+    print_in_order(root->_left);
     printf("%d -> ", root->value);
-    print_pre_order(root->_right);
+    print_in_order(root->_right);
 }
 
 void print_post_order(Node *root) {
     if(root == NULL) return;
-    print_pre_order(root->_left);
-    print_pre_order(root->_right);
+    print_post_order(root->_left);
+    print_post_order(root->_right);
     printf("%d -> ", root->value);
 }
 

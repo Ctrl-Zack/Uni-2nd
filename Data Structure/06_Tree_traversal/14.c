@@ -55,81 +55,79 @@ Node *_tree_insert(Node *nd, int value) {
     return nd;
 }
 
-void tree_delete(BTree *tr, int target) {
-    if(tree_search(tr->_root, target) != NULL) {
-        tr->_root = _tree_delete(tr->_root, target);
-        tr->_size--;
-    }
-}
-
-Node *_tree_delete(Node *root, int target) {
-    if(root == NULL) return NULL;
-    if(root->value > target) root->_left = _tree_delete(root->_left, target);
-    if(root->value < target) root->_right = _tree_delete(root->_right, target);
-    else {
-        if(root->_left == NULL && root->_right == NULL) {
-            free(root);
-            return NULL;
-        } else if(root->_left == NULL || root->_right == NULL) {
-            Node *tmp = (root->_left == NULL) ? root->_right : root->_left;
-            free(root);
-            return tmp; 
-        } else {
-            Node *tmp = __tree_find_min(root->_right);
-            root->value = tmp->value;
-            root->_right = _tree_delete(root->_right, tmp->value);
-        }
-    }
-    return root;
-}
-
-Node *__tree_find_min(Node *root) {
-    if(root == NULL) return NULL;
-    else if(root->_left != NULL) return __tree_find_min(root->_left);
-    return root;
-}
-
 // * traversal functions
 
-void print_pre_order(Node *root) {
-    if(root == NULL) return;
+Node *pre_order_search(Node *root, int key) {
+    if(root == NULL) return NULL;
+    
     printf("%d -> ", root->value);
-    print_pre_order(root->_left);
-    print_pre_order(root->_right);
+    if(root->value == key) return root;
+    
+    Node *left_res = pre_order_search(root->_left, key);
+    if(left_res) return left_res;
+    
+    pre_order_search(root->_right, key);
 }
 
-void print_in_order(Node *root) {
-    if(root == NULL) return;
-    print_pre_order(root->_left);
+Node *in_order_search(Node *root, int key) {
+    if(root == NULL) return NULL;
+    
+    Node *left_res = in_order_search(root->_left, key);
+    if(left_res) return left_res;
+    
     printf("%d -> ", root->value);
-    print_pre_order(root->_right);
+    if(root->value == key) return root;
+    
+    in_order_search(root->_right, key);
 }
 
-void print_post_order(Node *root) {
-    if(root == NULL) return;
-    print_pre_order(root->_left);
-    print_pre_order(root->_right);
+Node *post_order_search(Node *root, int key) {
+    if(root == NULL) return NULL;
+    
+    Node *left_res = post_order_search(root->_left, key);
+    if(left_res) return left_res;
+    
+    Node *right_res = post_order_search(root->_right, key);
+    if(right_res) return right_res;
+    
     printf("%d -> ", root->value);
+    if(root->value == key) return root;
+
+    return NULL;
 }
 
 int main() {
     BTree bst;
     tree_init(&bst);
     
-    // 56 30 61 39 47 35 75 13 21 64 26 73 18
-    tree_insert(&bst, 56);
-    tree_insert(&bst, 30);
-    tree_insert(&bst, 61);
-    tree_insert(&bst, 39);
-    tree_insert(&bst, 47);
-    tree_insert(&bst, 35);
-    tree_insert(&bst, 75);
-    tree_insert(&bst, 13);
-    tree_insert(&bst, 21);
-    tree_insert(&bst, 64);
-    tree_insert(&bst, 26);
-    tree_insert(&bst, 73);
-    tree_insert(&bst, 18);
+    printf("Enter the number of the nodes: ");
+    int N;
+    scanf("%d", &N);
+    
+    // * sample: 48 17 6 5 40 32 63 64 76 65 78
+    printf("Nodes: ");
+    for (size_t i = 0; i < N; i++) {
+        int tmp;
+        scanf("%d", &tmp);
+        tree_insert(&bst, tmp);
+    }
+    
+    printf("Search key: ");
+    int key_value;
+    scanf("%d", &key_value);
 
-    print_pre_order(bst._root);
+    puts("\npre-order: ");
+    Node *tmp = pre_order_search(bst._root, key_value);
+    if(tmp) printf("\naddress: x%X | ans: %d\n", tmp, tmp->value);
+    else printf("not found\n");
+    
+    puts("\nin-order: ");
+    tmp = in_order_search(bst._root, key_value);
+    if(tmp) printf("\naddress: x%X | ans: %d\n", tmp, tmp->value);
+    else printf("not found\n");
+    
+    puts("\npost-order: ");
+    tmp = post_order_search(bst._root, key_value);
+    if(tmp) printf("\naddress: x%X | ans: %d\n", tmp, tmp->value);
+    else printf("not found\n");
 }
