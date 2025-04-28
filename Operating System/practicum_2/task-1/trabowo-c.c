@@ -46,7 +46,6 @@ void f_list(char files[][NFNAME], int *idx) {
         ssize_t nbytes = read(fd[0], buff, sizeof(buff) - 1);
         buff[nbytes] = '\0';
         close(fd[0]);
-        
 
         char *token = strtok(buff, "\n");
         while(token && *idx < NFILES) {
@@ -131,8 +130,12 @@ int f_count(char *genre) {
 
 void total(int cnt[]) {
     if(fork() == 0) {
+        char genre[NFILES];
+        if(cnt[3] == cnt[0]) strcpy(genre, "horror");
+        if(cnt[3] == cnt[1]) strcpy(genre, "animasi");
+        if(cnt[3] == cnt[2]) strcpy(genre, "drama");
         char cmd[512];
-        snprintf(cmd, sizeof(cmd), "echo \"Jumlah film horror: %d\nJumlah film animasi: %d\nJumlah film drama: %d\nGenre dengan jumlah film terbanyak: %d\" >> total.txt", cnt[0], cnt[1], cnt[2], cnt[3]);
+        snprintf(cmd, sizeof(cmd), "echo \"Jumlah film horror: %d\nJumlah film animasi: %d\nJumlah film drama: %d\nGenre dengan jumlah film terbanyak: %s\" > total.txt", cnt[0], cnt[1], cnt[2], genre);
         execlp("sh", "sh", "-c", cmd, NULL);
         exit(0);
     }
