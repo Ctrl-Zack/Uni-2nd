@@ -63,6 +63,9 @@ Gunakan string `cmd` dan gunakan `snprintf` untuk melakukan formatting pada stri
 ```
 > Buat child process baru dengan `fork()` dan jalankan command `rm -rf <nama_file>` untuk menghapus file zip.
 
+Output:\
+![task-1 a](/picture/trabowo_a.png)
+
 ### b. Pemilihan Film Secara Acak
 ```c
     char cmd[512];
@@ -77,6 +80,9 @@ untuk melakukan shufle dan mengambil hanya 1 file saja.\
 contoh outputnya: `./film/18_it_horror.jpg`\
 `awk -F'/' '{ print \"Film for Trabowo & Peddy: \" $3 }'`\
 gunakan awk untuk mengubah formatnya, print string yang ada di soal, lalu $3 karena nama filenya ada di field ke-3 yang dipisahkan oleh delimiter berupa `/`.
+
+Output:\
+![task-1 b](/picture/trabowo_b.png)
 
 ### c. Memilah Film Berdasarkan Genre
 ```c
@@ -270,6 +276,11 @@ void total(int cnt[]) {
 ```
 > Fungsi `total()` akan membuat sebuah file `total.txt` dengan jumlah yang sudah didapatkan dari fungsi `f_count()`. `cnt[3]` adalah index yang menyimpan nilai dari jumlah file terbanyak dari semua genre. `cnt[3]` akan dibandingkan dengan `cnt[2], cnt[1], dan cnt[0]` yang masing-masing indexnya merupakan banyaknya film pada masing-masing genre. Jika `cnt[3]` (maksimum)-nya sesuai dengan salah satu index, maka string `genre[]` akan dicopy dengan nama dari genre yang sesuai.
 
+Output:\
+![task-1 c folder](/picture/trabowo_c_folder.png)
+![task-1 c recap](/picture/trabowo_c_recap.png)
+![task-1 c total](/picture/trabowo_c_total.png)
+
 ### d. Pengarsipan Film
 ```c
 int main() {
@@ -297,6 +308,8 @@ int main() {
 ```
 > Buat 3 child process yang berjalan secara bersamaan (overlapping) yang mana masing-masing commandnya akan melakukan zip setiap directory pada directory film sesuai dengan genrenya lalu menghapus directory genrenya.
 
+Output:\
+![task-1 d](/picture/trabowo_d.png)
 
 # task-3 Cella’s Manhwa
 ```c
@@ -528,3 +541,7 @@ void Zip_Save_Goodbye(char *HRmanhwa[], char FILEname[MANHWA][MXLINE], char ZIPn
 }
 ```
 > Fungsi ini akan melakukan iterasi untuk setiap manhwa, pada for loop pertama, akan membuat process-process yang akan menjalankan command untuk membuat subdirectory Images jika belum ada dan melakukan `zip -q -r <nama_zip> <nama_folder>` untuk zip file dalam mode quiet dan secara rekursif. Setelah semua process zip selesai, maka lakukan iterasi lagi pada for loop kedua untuk menghapus file-file pada folder Heroines secara terurut dengan abjad, masing-masing iterasi akan menjalankan command `find ./Heroines/<nama_heroines> -type f | sort | while read -r file; do rm "$file\; done`. Command tersebut akan mencari file dalam directory `./Heroines/<nama_heroines>` dan akan disort berdasarkan abjad, lalu outputnya dipipe ke while loop yang akan membaca masing-masing linenya dan menghapusnya satu-persatu.
+
+Output:\
+![task-3 solver](/picture/solver.png)
+![task-3 solver manhwa](/picture/solver_manhwa.png)
