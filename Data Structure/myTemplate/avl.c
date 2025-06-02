@@ -1,151 +1,208 @@
-/*
-# Task
-    store the following integers in an array bst[1..15] such that bst represents a complete 
-    binary search tree: 34 23 45 46 37 78 90 2 40 20 87 53 12 15 91.
-*/
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stdio.h>
 
-#include<stdio.h>
-#include<stdlib.h>
+typedef struct AVLNode_t {
+    int data;
+    struct AVLNode_t *left, *right;
+    int height;
+} AVLNode;
 
-// * binary tree data structure
-
-typedef struct node_t {
-    int value;
-    struct node_t *_left, *_right;
-} Node;
-
-typedef struct btree_t {
-    Node *_root;
+typedef struct AVL_t {
+    AVLNode *_root;
     unsigned int _size;
-} BTree;
+} AVL;
 
-void tree_init(BTree *tr);
-Node *create_new_node(int value);
-Node *tree_search(Node *root, int target);
-void tree_insert(BTree *tr, int value);
-Node *_tree_insert(Node *nd, int value);
-void tree_delete(BTree *tr, int target);
-Node *_tree_delete(Node *root, int target);
-Node *__tree_find_min(Node *root);
-
-
-void tree_init(BTree *tr) {
-    tr->_root = NULL;
-    tr->_size =0;
-}
-
-Node *create_new_node(int value) {
-    Node *newNode = (Node *)malloc(sizeof(Node));
-    newNode->value = value;
-    newNode->_left = newNode->_right = NULL;
+AVLNode *_avl_createNode(int value) {
+    AVLNode *newNode = (AVLNode *)malloc(sizeof(AVLNode));
+    newNode->data = value;
+    newNode->height = 1;
+    newNode->left = newNode->right = NULL;
     return newNode;
 }
 
-Node *tree_search(Node *root, int target) {
-    if(root == NULL || root->value == target) return root;
-    if(root->value > target) return tree_search(root->_left, target);
-    return tree_search(root->_right, target);
-}
-
-void tree_insert(BTree *tr, int value) {
-    if(tree_search(tr->_root, value) == NULL) {
-        tr->_root = _tree_insert(tr->_root, value);
-        tr->_size++;
+AVLNode *_search(AVLNode *root, int value) {
+    while (root != NULL) {
+        if (value < root->data) root = root->left;
+        else if (value > root->data) root = root->right;
+        else return root;
     }
+    return root;
 }
 
-Node *_tree_insert(Node *nd, int value) {
-    if(nd == NULL) return create_new_node(value);
-    if(nd->value > value) nd->_left = _tree_insert(nd->_left, value);
-    if(nd->value < value) nd->_right = _tree_insert(nd->_right, value);
-    return nd;
+int _getHeight(AVLNode *node) {
+    if(node == NULL) return 0; 
+    return node->height;
 }
 
-void tree_delete(BTree *tr, int target) {
-    if(tree_search(tr->_root, target) != NULL) {
-        tr->_root = _tree_delete(tr->_root, target);
-        tr->_size--;
-    }
+int _max(int a, int b) {
+    return (a > b) ? a : b;
 }
 
-Node *_tree_delete(Node *root, int target) {
-    if(root == NULL) return NULL;
-    if(root->value > target) root->_left = _tree_delete(root->_left, target);
-    if(root->value < target) root->_right = _tree_delete(root->_right, target);
+AVLNode *_rightRotate(AVLNode *pivotNode) {
+    AVLNode *newParrent = pivotNode->left;
+    pivotNode->left = newParrent->right;
+    newParrent->right = pivotNode;
+
+    pivotNode->height  = _max(_getHeight(pivotNode->left),  _getHeight(pivotNode->right))  + 1;
+    newParrent->height = _max(_getHeight(newParrent->left), _getHeight(newParrent->right)) + 1;
+    
+    return newParrent;
+}
+
+AVLNode *_leftRotate(AVLNode *pivotNode) {
+
+    AVLNode *newParrent = pivotNode->right;
+    pivotNode->right = newParrent->left;
+    newParrent->left = pivotNode;
+
+    pivotNode->height  = _max(_getHeight(pivotNode->left),  _getHeight(pivotNode->right))  + 1;
+    newParrent->height = _max(_getHeight(newParrent->left), _getHeight(newParrent->right)) + 1;
+    
+    return newParrent;
+}
+
+AVLNode *_leftCaseRotate(AVLNode *node){
+    return _rightRotate(node);
+}
+
+AVLNode *_rightCaseRotate(AVLNode *node){
+    return _leftRotate(node);
+}
+
+AVLNode *_leftRightCaseRotate(AVLNode *node){
+    node->left = _leftRotate(node->left);
+    return _rightRotate(node);
+}
+
+AVLNode *_rightLeftCaseRotate(AVLNode *node){
+    node->right = _rightRotate(node->right);
+    return _leftRotate(node);
+}
+
+int _getBalanceFactor(AVLNode *node){
+    if(node == NULL) return 0;
+    return _getHeight(node->left) - _getHeight(node->right);
+}
+
+AVLNode *_insert_AVL(AVL *avl, AVLNode *node, int value) {
+    
+    if(node == NULL) return _avl_createNode(value);
+    if(value < node->data) node->left = _insert_AVL(avl, node->left, value);
+    else if(value > node->data) node->right = _insert_AVL(avl, node->right, value);
+    
+    node->height = 1 + _max(_getHeight(node->left), _getHeight(node->right)); 
+
+    int balanceFactor = _getBalanceFactor(node);
+    
+    if(balanceFactor > 1 && value < node->left->data) return _leftCaseRotate(node);
+    if(balanceFactor > 1 && value > node->left->data) return _leftRightCaseRotate(node);
+    if(balanceFactor < -1 && value > node->right->data) return _rightCaseRotate(node);
+    if(balanceFactor < -1 && value < node->right->data) return _rightLeftCaseRotate(node);
+    
+    return node;
+}
+
+AVLNode *_findMinNode(AVLNode *node) {
+    AVLNode *currNode = node;
+    while (currNode && currNode->left != NULL)
+        currNode = currNode->left;
+    return currNode;
+}
+
+AVLNode *_remove_AVL(AVLNode *node, int value){
+    if(node == NULL) return node;
+    if(value > node->data) node->right = _remove_AVL(node->right, value);
+    else if(value < node->data) node->left = _remove_AVL(node->left, value);
     else {
-        if(root->_left == NULL && root->_right == NULL) {
-            free(root);
-            return NULL;
-        } else if(root->_left == NULL || root->_right == NULL) {
-            Node *tmp = (root->_left == NULL) ? root->_right : root->_left;
-            free(root);
-            return tmp; 
+        AVLNode *temp;
+        if((node->left == NULL) || (node->right == NULL)) {
+            temp = NULL;
+            if(node->left == NULL) temp = node->right;  
+            else if(node->right == NULL) temp = node->left;
+            
+            if(temp == NULL) {
+                temp = node;
+                node = NULL;
+            } else *node = *temp;   
+            
+            free(temp);
         } else {
-            Node *tmp = __tree_find_min(root->_right);
-            root->value = tmp->value;
-            root->_right = _tree_delete(root->_right, tmp->value);
-        }
-    }
-    return root;
-}
-
-Node *__tree_find_min(Node *root) {
-    if(root == NULL) return NULL;
-    else if(root->_left != NULL) return __tree_find_min(root->_left);
-    return root;
-}
-
-// * traversal functions
-
-void print_pre_order(Node *root) {
-    if(root == NULL) return;
-    printf("%d -> ", root->value);
-    print_pre_order(root->_left);
-    print_pre_order(root->_right);
-}
-
-void print_in_order(Node *root) {
-    if(root == NULL) return;
-    print_pre_order(root->_left);
-    printf("%d -> ", root->value);
-    print_pre_order(root->_right);
-}
-
-void print_post_order(Node *root) {
-    if(root == NULL) return;
-    print_pre_order(root->_left);
-    print_pre_order(root->_right);
-    printf("%d -> ", root->value);
-}
-
-void ins_to_complete(BTree *tr, int bst[], int lo, int hi) {
-    if(lo <= hi) {
-        int mid = (hi + lo) / 2;
-        tree_insert(tr, bst[mid]);
-        printf("inserting: %d\n", bst[mid]);
-        ins_to_complete(tr, bst, lo, mid - 1);
-        ins_to_complete(tr, bst, mid + 1, hi);
-    }
-}
-
-int main() {
-    BTree complete;
-    tree_init(&complete);
-
-    int bst[] = {34, 23, 45, 46, 37, 78, 90, 2, 40, 20, 87, 53, 12, 15, 91};
-    int n = sizeof(bst) / sizeof(int);
-    
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = 0; j < n - i - 1; j++) {
-            if (bst[j] > bst[j + 1]) {
-                int temp = bst[j];
-                bst[j] = bst[j + 1];
-                bst[j + 1] = temp;
-            }
+            temp = _findMinNode(node->right);
+            node->data = temp->data;
+            node->right = _remove_AVL(node->right, temp->data);
         }
     }
 
-    ins_to_complete(&complete, bst, 0, n - 1);
+	if(node == NULL) return node;
     
-    print_pre_order(complete._root);
+    node->height = _max(_getHeight(node->left), _getHeight(node->right)) + 1;
+
+    int balanceFactor = _getBalanceFactor(node);
+    
+    if(balanceFactor > 1 && _getBalanceFactor(node->left) >= 0) return _leftCaseRotate(node);
+    if(balanceFactor > 1 && _getBalanceFactor(node->left) < 0) return _leftRightCaseRotate(node);
+    if(balanceFactor < -1 && _getBalanceFactor(node->right) <= 0) return _rightCaseRotate(node);
+    if(balanceFactor < -1 && _getBalanceFactor(node->right) > 0) return _rightLeftCaseRotate(node);
+    
+    return node;
+}
+
+void avl_init(AVL *avl) {
+    avl->_root = NULL;
+    avl->_size = 0u;
+}
+
+bool avl_isEmpty(AVL *avl) {
+    return avl->_root == NULL;
+}
+
+bool avl_find(AVL *avl, int value) {
+    AVLNode *temp = _search(avl->_root, value);
+    if (temp == NULL) return false;
+    
+    if (temp->data == value) return true;
+    else return false;
+}
+
+void avl_insert(AVL *avl, int value){
+    if(!avl_find(avl, value)){
+        avl->_root = _insert_AVL(avl, avl->_root, value);
+        avl->_size++;
+    }
+}
+
+void avl_remove(AVL *avl, int value){
+    if(avl_find(avl, value)){
+        avl->_root = _remove_AVL(avl->_root, value);
+        avl->_size--;
+    }
+}
+
+void preorder(AVLNode *root) {
+    if (root) {
+        preorder(root->left);
+        printf("%d ", root->data);
+        preorder(root->right);
+    }
+}
+
+int main(){
+    AVL avlku;
+    avl_init(&avlku);
+    avl_insert(&avlku,1);
+    avl_insert(&avlku,2);
+    avl_insert(&avlku,3);
+    avl_insert(&avlku,4);
+	avl_insert(&avlku,5);
+	avl_insert(&avlku,7);
+	avl_insert(&avlku,99);
+	avl_insert(&avlku,12);
+	avl_insert(&avlku,31);
+	avl_remove(&avlku,1);
+	avl_remove(&avlku,99);
+	avl_remove(&avlku,4);
+	avl_remove(&avlku,12);
+	avl_remove(&avlku,31);
+
 }

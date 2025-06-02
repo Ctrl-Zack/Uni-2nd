@@ -65,7 +65,7 @@ void tree_delete(BTree *tr, int target) {
 Node *_tree_delete(Node *root, int target) {
     if(root == NULL) return NULL;
     if(root->value > target) root->_left = _tree_delete(root->_left, target);
-    if(root->value < target) root->_right = _tree_delete(root->_right, target);
+    else if(root->value < target) root->_right = _tree_delete(root->_right, target);
     else {
         if(root->_left == NULL && root->_right == NULL) {
             free(root);
