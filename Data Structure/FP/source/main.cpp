@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdint.h>
 #include "inputlogic.h"
 #include "renderscreen.h"
 #include "databaselogic.h"

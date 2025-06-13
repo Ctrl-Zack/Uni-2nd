@@ -1,15 +1,6 @@
 #include "renderscreen.h"
 #include "menuconfig.h"
 
-const char *PROMPT[5] = // 
-{
-    "1. CREATE\n",
-    "2. READ\n",
-    "3. UPDATE\n",
-    "4. DELETE\n",
-    "5. EXIT\n"
-};
-
 // 
 const WORD COLOR_NORMAL = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
 const WORD COLOR_SELECTED = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE;
@@ -38,17 +29,38 @@ void setCursorTop()
     SetConsoleCursorPosition(console, home_coords);
 }
 
+void renderFilteredMenu(const std::string &query, const std::vector<uint8_t> &filtered_indices, uint8_t selected_option)
+{
+    setCursorTop();
+
+    std::cout << "Database Operation Options\n";
+    std::cout << "Search (type to filter, Enter to select): " << query << std::string(40 - query.length(), ' ') << "\n\n";
+
+    for (uint8_t i = 0; i < filtered_indices.size(); ++i)
+    {
+        uint8_t index = filtered_indices[i];
+        SetConsoleTextAttribute(console, (i == selected_option) ? COLOR_SELECTED : COLOR_NORMAL);
+        // std::cout << menu_prompts[index] << '\n';
+        std::cout << menu_prompts[index] << std::string(40 - menu_prompts[index].size(), ' ') << '\n';
+    }
+
+    SetConsoleTextAttribute(console, COLOR_NORMAL);
+
+    for (int i = filtered_indices.size(); i < MAX_OPTION; ++i)
+        std::cout << std::string(40, ' ') << '\n';
+}
+
 void renderBoxedMenu(uint8_t selected_option)
 {
     setCursorTop();
     
     std::cout << "Database Operation Options\n";
-    SetConsoleTextAttribute(console, COLOR_NORMAL);
+    std::cout << "Search (type to filter, Enter to select): \n\n";
     
-    for (uint8_t i = S_ONE; i < MAX_OPTION; ++i)
+    for (uint8_t i = 0; i < MAX_OPTION; ++i)
     {
         SetConsoleTextAttribute(console, (i == selected_option) ? COLOR_SELECTED : COLOR_NORMAL);
-        std::cout << PROMPT[i];
+        std::cout << menu_prompts[i] << '\n';
     }
     SetConsoleTextAttribute(console, COLOR_NORMAL);
 }

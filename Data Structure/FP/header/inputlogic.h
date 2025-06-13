@@ -1,6 +1,8 @@
 #ifndef INPUTLOGIC_H
 #define INPUTLOGIC_H
 
+#include <string>
+#include <algorithm>
 #include <stdint.h>
 #include <conio.h>
 

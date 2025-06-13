@@ -3,22 +3,20 @@ TARGET = menu_app
 
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++17
+CXXFLAGS = -Wall -Wextra -std=c++17 -Iheader
 
 # source and header
-SRC = main.cpp inputlogic.cpp renderscreen.cpp databaselogic.cpp
-OBJ = $(SRC:.cpp=.o)
+SRC = $(wildcard source/*.cpp)
+OBJ = $(SRC:source/%.cpp=%.o)
 
 # Build rules
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $@ $^
-	@echo Deleting object files...
-	@del /Q *.o 2>nul || rm -f *.o
 
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $<
+%.o: source/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Clean rule
 clean:
