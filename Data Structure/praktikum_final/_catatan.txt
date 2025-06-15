@@ -1,0 +1,15 @@
+AC 13:
+B, C, E, F, H, I, L, M, O, P, R, T, V,
+
+
+NA 7:
+A, D, G, J, K, N, Q,
+
+
+TO THINK: A, D
+
+
+NGULI: J, Q 
+
+
+HARD: G, K, N
