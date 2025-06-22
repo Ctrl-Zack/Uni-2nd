@@ -65,12 +65,15 @@ void tambahData(AVL *records)
     
     clearScreen();
     showCursor();
-    if (selected_add_option == 0) {
+    if (selected_add_option == 0)
+    {
         char nomor_buffer[MAX_NOKOMPONEN + 1];
         printf("Generate nomor otomatis\n");
         generateNextNumber(records, nomor_buffer);
         snprintf(newData.nomor, sizeof(newData.nomor), nomor_buffer);
-    } else {
+    }
+    else if (selected_add_option == 1)
+    {
         uint16_t nomor;
         
         printf("Input nomor manual\n");
@@ -79,10 +82,16 @@ void tambahData(AVL *records)
         scanf(" %hu", &nomor);
         snprintf(newData.nomor, sizeof(newData.nomor), "%06d", nomor);
     }
+    else if (selected_add_option == 2)
+    {
+        hideCursor();
+        clearScreen();
+        return;
+    }
     
-    if (avl_find(records, newData.nomor)) {
-        printf("nomor komponen harus unik.\n");
-    } else {
+    if (avl_find(records, newData.nomor)) printf("nomor komponen harus unik.\n");
+    else
+    {
         printf("masukan nama: ");
         scanf(" %25[^\n]", newData.nama);
         printf("masukan stok: ");
@@ -92,7 +101,7 @@ void tambahData(AVL *records)
         
         avl_insert(records, newData);
     }
-
+    
     printf("Press any key to continue...\n");
     hideCursor();
     getch();
@@ -104,17 +113,20 @@ void ubahData(AVL *records)
     clearScreen();
     showCursor();
     char nomor_komponen[MAX_NOKOMPONEN + 1];
-    uint16_t nomor;
-    printf("Ubah Data\n");
-    printf("Masukan nomor komponen yang ingin diubah: ");
-    scanf(" %hu", &nomor);
-    snprintf(nomor_komponen, sizeof(nomor_komponen), "%06d", nomor);
+    int16_t nomor;
+    printf("%s%s Ubah Data %s\n", C_BOLD, C_HIGHLIGHT, C_RESETATTR);
+    printf("Masukan nomor komponen yang ingin diubah (-1 untuk kembali ke menu utama): ");
+    scanf(" %hd", &nomor);
+    if (nomor >= 0) snprintf(nomor_komponen, sizeof(nomor_komponen), "%06d", nomor);
+    else
+    {
+        hideCursor();
+        clearScreen();
+        return;
+    }
 
     AVLNode *node = _search(records->_root, nomor_komponen);
-    if (!node)
-    {
-        printf("Data dengan nomor komponen (%s) tidak ditemukan.\n", nomor_komponen);
-    }
+    if (!node) printf("Data dengan nomor komponen (%s) tidak ditemukan.\n", nomor_komponen);
     else
     {
         printf("Data Sekarang : nomor:\n%s\nnama: %s\nstok: %d\nharga: %2f\n", 
@@ -139,6 +151,7 @@ void ubahData(AVL *records)
 void tampilkanIndex(AVL *records)
 {
     clearScreen();
+    printf("%s%s Tampilkan Data %s\n", C_BOLD, C_HIGHLIGHT, C_RESETATTR);
     if (!avl_isEmpty(records))
     {
         printf("+-----------+-------------------------------+---------------------+---------------------+\n");
@@ -155,6 +168,7 @@ void tampilkanIndex(AVL *records)
 void tampilkanTanpaIndex(AVL *records)
 {
     clearScreen();
+    printf("%s%s Data Tanpa Index %s\n", C_BOLD, C_HIGHLIGHT, C_RESETATTR);
     if (!avl_isEmpty(records))
     {
         printf("+-------------------------------+---------------------+---------------------+\n");
@@ -173,11 +187,17 @@ void hapusData(AVL *records)
     clearScreen();
     showCursor();
     char nomor_komponen[MAX_NOKOMPONEN + 1];
-    uint16_t nomor;
-    printf("Hapus Data\n");
-    printf("Masukan nomor komponen yang ingin dihapus: ");
-    scanf(" %hu", &nomor);
-    snprintf(nomor_komponen, sizeof(nomor_komponen), "%06d", nomor);
+    int16_t nomor;
+    printf("%s%s Hapus Data %s\n", C_BOLD, C_HIGHLIGHT, C_RESETATTR);
+    printf("Masukan nomor komponen yang ingin dihapus (-1 untuk kembali ke menu utama): ");
+    scanf(" %hd", &nomor);
+    if (nomor >= 0) snprintf(nomor_komponen, sizeof(nomor_komponen), "%06d", nomor);
+    else
+    {
+        hideCursor();
+        clearScreen();
+        return;
+    }
     
     if (avl_find(records,nomor_komponen))
     {

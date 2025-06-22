@@ -15,8 +15,9 @@ const char *menu_list[] = {
 };
 
 const char *add_title = "Pilih Opsi Tambah Data";
-const int8_t add_op_count = 2;
+const int8_t add_op_count = 3;
 const char *add_option[] = {
     "Generate nomor otomatis    ",
-    "Input nomor manual         "
+    "Input nomor manual         ",
+    "Kembali                    "
 };
