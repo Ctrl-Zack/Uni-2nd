@@ -1,1 +1,1 @@
-College at its. Now 2nd Sem
+2nd Semester
